@@ -1,5 +1,12 @@
 # he-ipv6-pool
 
+> 本仓是 [x6nux/he-ipv6-pool](https://github.com/x6nux/he-ipv6-pool) 的维护 fork：main
+> 每次推送自动构建 `ghcr.io/callacat/he-ipv6-pool`（linux/amd64 + linux/arm64，见
+> `.github/workflows/ghcr.yml`），`deploy/` 是「一个容器一个 /64」的多出口编排。
+> 上游代码与本文原样保留，便于同步。
+
+[![ghcr](https://github.com/callacat/he-ipv6-pool/actions/workflows/ghcr.yml/badge.svg)](https://github.com/callacat/he-ipv6-pool/actions/workflows/ghcr.yml)
+
 [![release](https://github.com/x6nux/he-ipv6-pool/actions/workflows/release.yml/badge.svg)](https://github.com/x6nux/he-ipv6-pool/actions/workflows/release.yml)
 [![license](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 
