@@ -1,0 +1,54 @@
+# 一台宿主机上的多个 IPv6 出口：共享同一条 HE 隧道（同一 server IPv4 + /48），
+# 每个容器固定一个 /64、监听不同端口，供 oc2api 的 __rate_limit_switch_no_direct__ 轮转。
+# 用法：cp .env.example .env，填好后 docker compose up -d
+name: he-ipv6-pool
+
+x-he-pool: &he-pool
+  image: ghcr.io/callacat/he-ipv6-pool:${IMAGE_TAG:-latest}
+  restart: unless-stopped
+  # 必须 host 网络：6in4（协议 41）没有端口，过 Docker NAT 会因 conntrack 冲突丢包
+  network_mode: host
+  cap_drop: [ALL]
+  cap_add: [NET_RAW]
+  read_only: true
+
+x-env: &env
+  HE_SERVER: ${HE_SERVER:?请在 .env 里填写 HE_SERVER}
+  HE_LOCAL: ${HE_LOCAL:-}
+  HE_MTU: ${HE_MTU:-1480}
+  PROXY_USER: ${PROXY_USER:?请在 .env 里填写 PROXY_USER}
+  PROXY_PASS: ${PROXY_PASS:?请在 .env 里填写 PROXY_PASS}
+  LOG_LEVEL: ${LOG_LEVEL:-info}
+
+services:
+  he-pool-1:
+    <<: *he-pool
+    container_name: he-pool-1
+    environment:
+      <<: *env
+      HE_PREFIXES: ${HE_PREFIX_1:?请在 .env 里填写 HE_PREFIX_1}
+      PROXY_LISTEN: ":${PORT_1:-37321}"
+
+  he-pool-2:
+    <<: *he-pool
+    container_name: he-pool-2
+    environment:
+      <<: *env
+      HE_PREFIXES: ${HE_PREFIX_2:?请在 .env 里填写 HE_PREFIX_2}
+      PROXY_LISTEN: ":${PORT_2:-37322}"
+
+  he-pool-3:
+    <<: *he-pool
+    container_name: he-pool-3
+    environment:
+      <<: *env
+      HE_PREFIXES: ${HE_PREFIX_3:?请在 .env 里填写 HE_PREFIX_3}
+      PROXY_LISTEN: ":${PORT_3:-37323}"
+
+  he-pool-4:
+    <<: *he-pool
+    container_name: he-pool-4
+    environment:
+      <<: *env
+      HE_PREFIXES: ${HE_PREFIX_4:?请在 .env 里填写 HE_PREFIX_4}
+      PROXY_LISTEN: ":${PORT_4:-37324}"
